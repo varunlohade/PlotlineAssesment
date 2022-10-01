@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "625367318918",
+    "project_id": "edgedetectionflutter",
+    "storage_bucket": "edgedetectionflutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:625367318918:android:7da89b2ce832cb20cdec07",
+        "android_client_info": {
+          "package_name": "com.example.plotline_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "625367318918-mu0hbbc0jsmdihbgm8v5cckr80p7uk63.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuLBeTVYjiioQA_25o6s8K2eV1OWdTMLY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "625367318918-mu0hbbc0jsmdihbgm8v5cckr80p7uk63.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

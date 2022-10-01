@@ -1,11 +1,18 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:plotline_app/camerapick.dart';
+import 'package:plotline_app/displayimages.dart';
 import 'package:plotline_app/homescreen.dart';
+import 'package:plotline_app/urlpicker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -41,32 +48,32 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var progress = 0;
   var images;
-  uploadImage() async {
-    final request = http.MultipartRequest("POST",
-        Uri.parse("https://edgedetectionassesment.herokuapp.com/upload"));
-    final headers = {"Content-type": "multipart/form-data"};
-    request.files.add(http.MultipartFile('image',
-        selectedImage!.readAsBytes().asStream(), selectedImage!.lengthSync(),
-        filename: selectedImage!.path.split("/").last));
+  // uploadImage() async {
+  //   final request = http.MultipartRequest("POST",
+  //       Uri.parse("https://edgedetectionassesment.herokuapp.com/upload"));
+  //   final headers = {"Content-type": "multipart/form-data"};
+  //   request.files.add(http.MultipartFile('image',
+  //       selectedImage!.readAsBytes().asStream(), selectedImage!.lengthSync(),
+  //       filename: selectedImage!.path.split("/").last));
 
-    request.headers.addAll(headers);
-    final response = await request.send();
-    http.Response res = await http.Response.fromStream(response);
-    print(res);
-    print("This is res body ${res.bodyBytes}");
-    // final resJson = jsonDecode(res.body);
-    images = res.bodyBytes;
+  //   request.headers.addAll(headers);
+  //   final response = await request.send();
+  //   http.Response res = await http.Response.fromStream(response);
+  //   print(res);
+  //   print("This is res body ${res.bodyBytes}");
+  //   // final resJson = jsonDecode(res.body);
+  //   images = res.bodyBytes;
 
-    setState(() {});
-    // message = compute(base64Decode, res.body);
-  }
+  //   setState(() {});
+  //   // message = compute(base64Decode, res.body);
+  // }
 
-  Future getImage() async {
-    final pickedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    selectedImage = File(pickedImage!.path);
-    setState(() {});
-  }
+  // Future getImage() async {
+  //   final pickedImage =
+  //       await ImagePicker().pickImage(source: ImageSource.gallery);
+  //   selectedImage = File(pickedImage!.path);
+  //   setState(() {});
+  // }
 
   Future getImageCamera() async {
     final pickedImage =
@@ -112,8 +119,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: SafeArea(
@@ -128,7 +133,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => UrlPicker()));
+                    },
                     child: Container(
                       height: 80,
                       width: 80,
@@ -165,7 +173,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     width: 20,
                   ),
                   InkWell(
-                    onTap: getImageCamera,
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => CameraPick()));
+                    },
                     child: Container(
                       height: 80,
                       width: 80,
@@ -200,10 +211,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     width: 20,
                   ),
                   InkWell(
-                    onTap: getImage,
-                    // Navigator.push(context,
-                    //     MaterialPageRoute(builder: (_) => HomePage()));
-
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => HomePage()));
+                    },
                     child: Container(
                       height: 80,
                       width: 80,
@@ -305,10 +316,13 @@ class _MyHomePageState extends State<MyHomePage> {
           //   ),
           // ),
           ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: getImage,
-      //   child: Icon(Icons.add_a_photo),
-      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => DisplayImages()));
+        },
+        child: Icon(Icons.download),
+      ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

@@ -1,29 +1,25 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:plotline_app/storage.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class CameraPick extends StatefulWidget {
+  const CameraPick({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<CameraPick> createState() => _CameraPickState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _CameraPickState extends State<CameraPick> {
   File? selectedImage;
   String message = "";
   var progress = 0;
   var images;
   final Storage storage = Storage();
-
-  uploadImage(String name, String path) async {
-   
+  uploadImage(String name) async {
+    print("Working");
     final request = http.MultipartRequest("POST",
         Uri.parse("https://edgedetectionassesment.herokuapp.com/upload"));
     final headers = {"Content-type": "multipart/form-data"};
@@ -38,10 +34,6 @@ class _HomePageState extends State<HomePage> {
     print("This is res body ${res.bodyBytes}");
     // final resJson = jsonDecode(res.body);
     images = res.bodyBytes;
-  
-// getting a directory path for saving
-// copy the file to a new path
-
     storage
         .uploadFilemodified(selectedImage!.path, "Modified_${name}", images)
         .then((value) => print("modified image uploaded"));
@@ -51,16 +43,16 @@ class _HomePageState extends State<HomePage> {
 
   Future getImage() async {
     final pickedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
+        await ImagePicker().pickImage(source: ImageSource.camera);
     selectedImage = File(pickedImage!.path);
+
     storage
         .uploadFile(
           pickedImage.path,
           pickedImage.name,
         )
         .then((value) => print("image uploaded to firebase"));
-    uploadImage(pickedImage.name, pickedImage.path);
+    uploadImage(pickedImage.name);
     setState(() {});
   }
 
@@ -95,13 +87,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Pick from gallery",
+          "Image from Camera",
         ),
         backgroundColor: Colors.blueAccent,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -166,7 +157,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: getImage,
-        child: Icon(Icons.add_a_photo),
+        child: Icon(Icons.camera),
       ),
     );
   }
